@@ -32,12 +32,12 @@ class ComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContent { ComposeScreen() }
+        val initialText = intent.getStringExtra(EXTRA_TEXT) ?: ""
+        setContent { ComposeScreen(initialText) }
     }
 
     @Composable
-    private fun ComposeScreen() {
+    private fun ComposeScreen(initial: String) {
         var text by remember { mutableStateOf("")}
 
 
@@ -82,7 +82,7 @@ class ComposeActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     private fun DefaultPreview() {
-        ComposeScreen()
+        ComposeScreen(initial = "")
     }
 
     companion object {

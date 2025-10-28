@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +37,7 @@ import com.example.lab_4.R
 import com.example.lab_4.data.database.ChiuitDbStore
 import com.example.lab_4.data.database.RoomDatabase
 import com.example.lab_4.presentation.ComposeActivity.Companion.EXTRA_TEXT
+import androidx.compose.foundation.layout.PaddingValues
 
 class MainActivity : ComponentActivity() {
 
@@ -63,7 +66,18 @@ class MainActivity : ComponentActivity() {
         Log.d("myTag", chiuitListState.value.toString());
         Surface(color = Color.White) {
             Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn { items(chiuitListState.value.size) { index -> ChiuitListItem(chiuitListState.value[index]) }}
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 88.dp) // spațiu pentru FAB
+                ) {
+                    items(chiuitListState.value.size) { index ->
+                        ChiuitListItem(
+                            chiuit = chiuitListState.value[index],
+                            onShare = { shareChiuit(it) },
+                            onDelete = { viewModel.removeChiuit(it) }
+                        )
+                    }
+                }
                 FloatingActionButton(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -80,7 +94,8 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun ChiuitListItem(chiuit: Chiuit) {
+    private fun ChiuitListItem(chiuit: Chiuit, onShare: (String) -> Unit, onDelete: (Chiuit) -> Unit)
+    {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -103,6 +118,10 @@ class MainActivity : ComponentActivity() {
                         stringResource(R.string.send_action_icon_content_description)
                     )
                 }
+                IconButton(onClick = { onDelete(chiuit) }) {
+                    Icon(Icons.Filled.Delete, contentDescription = "Șterge")
+                }
+
             }
             // TODO 4: Add a new button that has the purpose to delete a chiuit.
         }
@@ -140,6 +159,7 @@ class MainActivity : ComponentActivity() {
     private fun setChiuitText(resultText: String?) {
         if(resultText !== null) {
             // TODO 1: Instantiate a new chiuit object then delegate the addition to the [viewModel].
+            viewModel.addChiuit(resultText)
         }
     }
 
@@ -149,5 +169,4 @@ class MainActivity : ComponentActivity() {
         HomeScreen(viewModel)
     }
 }
-
 

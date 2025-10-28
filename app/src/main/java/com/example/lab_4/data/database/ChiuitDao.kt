@@ -13,6 +13,11 @@ interface ChiuitDao {
     fun getAll(): List<ChiuitEntity>
     // TODO 3: Define the insert operation.
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(chiuit: ChiuitEntity)
+
     // TODO 6: Define the delete operation.
+    @Query("DELETE FROM chiuits WHERE timestamp = :timestamp")
+    fun deleteByTimestamp(timestamp: Long)
 
 }
